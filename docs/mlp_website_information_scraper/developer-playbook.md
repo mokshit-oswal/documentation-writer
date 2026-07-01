@@ -1,18 +1,22 @@
+---
+title: Developer Playbook
+---
+
 # mlp_website_information_scraper — Developer Playbook
 
 ## Stack and conventions
 
-| Layer | Technology |
-|-------|------------|
-| Runtime | Databricks Spark 15.4.x-cpu-ml-scala2.12, single-node clusters (`local[*]`) |
-| Packaging | Python wheel (`setup.py`), deployed via Databricks Asset Bundles |
-| Crawling | crawl4ai, Playwright 1.43.0, BeautifulSoup4, nest_asyncio |
-| Extraction | langchain 0.3.26, databricks-langchain 0.19.0, Pydantic schemas |
-| Parsing | phonenumbers, jellyfish (Jaro-Winkler), pandas |
-| Validation | fuzzywuzzy |
-| Storage | Unity Catalog Delta tables (`main.*`), S3 via AWS instance profile |
-| LLM endpoint | `contact-extraction-nova-micro` via `ChatDatabricks` |
-| CI/CD | GitHub Actions deploying to dev / staging / prod Databricks workspaces |
+| Layer        | Technology                                                                  |
+| --------------| -----------------------------------------------------------------------------|
+| Runtime      | Databricks Spark 15.4.x-cpu-ml-scala2.12, single-node clusters (`local[*]`) |
+| Packaging    | Python wheel (`setup.py`), deployed via Databricks Asset Bundles            |
+| Crawling     | crawl4ai, Playwright 1.43.0, BeautifulSoup4, nest_asyncio                   |
+| Extraction   | langchain 0.3.26, databricks-langchain 0.19.0, Pydantic schemas             |
+| Parsing      | phonenumbers, jellyfish (Jaro-Winkler), pandas                              |
+| Validation   | fuzzywuzzy                                                                  |
+| Storage      | Unity Catalog Delta tables (`main.*`), S3 via AWS instance profile          |
+| LLM endpoint | `contact-extraction-nova-micro` via `ChatDatabricks`                        |
+| CI/CD        | GitHub Actions deploying to dev / staging / prod Databricks workspaces      |
 
 **Conventions:**
 - Every pipeline stage is a wheel entry point with a `main()` function and `argparse` CLI arguments.
