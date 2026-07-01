@@ -4,4 +4,6 @@ relative_links:
   enabled: true
   collections: true
 include:
-  - SKILL.md
+  - index.md
+  - user-playbook.md
+  - developer-playbook.md
