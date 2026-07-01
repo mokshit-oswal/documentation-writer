@@ -4,5 +4,5 @@ This project is a Databricks Asset Bundle that crawls business websites and uses
 
 ## Documentation
 
-- [User Playbook](mlp_website_information_scraper/user-playbook) — How to use this project: deploy, run, monitor, and configure both scraper pipelines.
-- [Developer Playbook](mlp_website_information_scraper/developer-playbook) — How to work on this project: architecture, entry-point reference, job wiring, and add-a-feature guides. 
+- [User Playbook](mlp_website_information_scraper/user-playbook)
+- [Developer Playbook](mlp_website_information_scraper/developer-playbook)

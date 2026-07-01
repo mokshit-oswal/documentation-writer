@@ -1,5 +1,6 @@
 ---
 title: Developer Playbook
+layout: default
 ---
 
 # mlp_website_information_scraper — Developer Playbook

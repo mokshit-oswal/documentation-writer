@@ -1,9 +1,6 @@
 plugins:
   - jekyll-relative-links
+
 relative_links:
   enabled: true
   collections: true
-include:
-  - index.md
-  - mlp_website_information_scraper/user-playbook.md
-  - mlp_website_information_scraper/developer-playbook.md

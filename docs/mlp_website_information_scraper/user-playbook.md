@@ -1,5 +1,6 @@
 ---
 title: User Playbook
+layout: default
 ---
 
 # mlp_website_information_scraper — User Playbook
