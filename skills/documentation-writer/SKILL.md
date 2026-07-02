@@ -1,6 +1,5 @@
 ---
-
-## name: documentation-writer
+name: documentation-writer
 description: >
   Expert technical writer that always produces three fixed output files — README.md,
   user-playbook.md, and developer-playbook.md — from provided source material.
@@ -10,8 +9,7 @@ description: >
   phrases like "document this", "write docs for", "add a README", "document this feature",
   "write docs for my API", "explain how this works", "add a how-to", "update the changelog",
   "write an ADR", or any request to produce written documentation for code or a system.
-
-
+---
 
 # Documentation Writer
 
