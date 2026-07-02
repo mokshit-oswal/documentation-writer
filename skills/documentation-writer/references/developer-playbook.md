@@ -34,7 +34,7 @@ Developer documentation lives inside the codebase and serves engineers and AI ag
 
 Ask one targeted question per missing piece if something critical is absent. Do not write any section that depends on a gap.
 
-**Step 3 — Generate content.** Use the templates below. For the three mandatory output files (`README.md`, `user-playbook.md`, `developer-playbook.md`), generate directly without awaiting approval — the output format is fixed. For supplementary documents (ADRs, add-a-feature guides, changelogs, agent-context files) propose the table of contents first and await approval before writing full content. For single-unit output (one docstring, one ADR) generate directly.
+**Step 3 — Generate content.** Use the templates in [templates/developer/](../templates/developer/). For the three mandatory output files (`README.md`, `user-playbook.md`, `developer-playbook.md`), generate directly without awaiting approval — the output format is fixed. For supplementary documents (ADRs, add-a-feature guides, changelogs, agent-context files) propose the table of contents first and await approval before writing full content. For single-unit output (one docstring, one ADR) generate directly. For ASCII flowchart syntax, see [ascii-diagram-guide.md](ascii-diagram-guide.md).
 
 ---
 
@@ -44,7 +44,7 @@ Ask one targeted question per missing piece if something critical is absent. Do 
 When documenting a module's functions, the reference is only complete when:
 - Every public function (not prefixed `_`) is listed — no omissions
 - Each entry has: function name, parameter table, return type, raised exceptions, and a usage example (the only allowed code fence per function)
-- Pipeline stages, orchestrators, and functions with ordering constraints include a **Flow** Mermaid diagram (input → process → output) before the parameter table
+- Pipeline stages, orchestrators, and functions with ordering constraints include a **Flow** ASCII diagram (input → process → output) before the parameter table
 - Side effects (writes to disk, mutates state, makes network calls) are explicitly documented
 - Any ordering constraint ("must be called before X") is shown as diagram edges, not long prose
 - If the function is a pipeline stage entry point, document what it consumes and what it produces (input table → output table, or input file → output file)
@@ -74,7 +74,7 @@ If you are tempted to add any prohibited content, put it in the appropriate play
 
 ### Add-a-feature guide standard
 This is the highest-value document for a growing codebase. It must be:
-- **Diagram-first** — an end-to-end Mermaid workflow overview (create → configure → wire → test → deploy) before step prose
+- **Diagram-first** — an end-to-end ASCII workflow overview (create → configure → wire → test → deploy) before step prose
 - **End-to-end** — covers every file that must be created or modified, in order
 - **Concrete** — includes the exact directory to create files in, the exact sections of config files to edit, and the exact commands to run to verify the new feature works
 - **Non-redundant** — does not say "add your logic here"; points to an existing example in the codebase
@@ -85,282 +85,23 @@ This is the highest-value document for a growing codebase. It must be:
 
 ## Templates
 
-### ADR
+Use these as starting shapes. Read the linked file before generating content.
 
-Store as `docs/decisions/ADR-NNN-slug.md`. Number sequentially. Never delete — they are permanent record.
-
-```markdown
-# ADR-NNN: [Short decision title]
-
-## Status
-Proposed | Accepted | Superseded by ADR-NNN | Deprecated
-
-## Date
-YYYY-MM-DD
-
-## Context
-The situation, constraints, and requirements that forced a decision.
-Be specific — include scale, team size, operational constraints.
-
-## Decision
-One clear sentence: what was decided.
-
-## Alternatives Considered
-
-### [Option A]
-- Pros: ...
-- Cons: ...
-- Rejected because: ...
-
-### [Option B]
-- Pros: ...
-- Cons: ...
-- Rejected because: ...
-
-## Consequences
-What becomes easier. What becomes harder. What new obligations this creates.
-```
-
-**Lifecycle:** PROPOSED → ACCEPTED → (SUPERSEDED or DEPRECATED). When a decision changes, write a new ADR and cross-link both directions.
-
----
-
-### Core Functions Reference (per module)
-
-Produce one section per public function. Use the function name and parameter table — do not fence the full signature.
-
-```markdown
-# [Module Name] — Function Reference
-
-## Module flow
-
-\`\`\`mermaid
-flowchart LR
-  input[Input] --> stageOne[stage_one]
-  stageOne --> stageTwo[stage_two]
-  stageTwo --> output[Output]
-\`\`\`
-
-[Max 3 sentences. Required when module has pipeline stages or 3+ linked functions.]
-
----
-
-## function_name
-
-`function_name(param1: Type, param2: Type = default) -> ReturnType`
-
-[One-sentence description of what this function does.]
-
-### Flow
-[Include when this function is a pipeline stage or orchestrator with 3+ steps or branching.]
-
-\`\`\`mermaid
-flowchart TD
-  consume[Consume input] --> transform[Transform]
-  transform --> produce[Produce output]
-\`\`\`
-
-[Max 3 sentences. Do not restate diagram nodes.]
-
-### Parameters
-| Name | Type | Required | Default | Description |
-|---|---|---|---|---|
-| param1 | Type | Yes | — | [What it is and valid values] |
-| param2 | Type | No | default | [Effect of changing it] |
-
-### Returns
-`ReturnType` — [Description of what is returned and its shape.]
-
-### Raises
-| Exception | When |
-|---|---|
-| `ExceptionType` | [Condition that triggers it] |
-
-### Side effects
-[Any writes to disk, mutations, or network calls. Write "None" if there are none.]
-
-### Usage example
-\`\`\`
-result = function_name(param1=value, param2=other_value)
-\`\`\`
-
----
-[Repeat for next function]
-```
-
----
-
-### README
-
-This is an index file. Follow the README index standard above. The complete file must stay within 60 lines.
-
-```markdown
-# [Project Name]
-
-[One paragraph: what this project does and who it is for. Derive from provided source material — do not invent.]
-
-## Documentation
-
-- [User Playbook](user-playbook.md) — How to use this project: tutorials, how-to guides, reference, and explanations for end users.
-- [Developer Playbook](developer-playbook.md) — How to work on this project: API reference, architecture decisions, add-a-feature guides, and engineering conventions.
-```
-
----
-
-### Add-a-Feature Guide
-
-```markdown
-# How to Add [Feature Type]
-
-## Overview
-What this guide produces. Which existing feature this mirrors (reference implementation).
-
-## Workflow overview
-
-\`\`\`mermaid
-flowchart TD
-  createModule[Create module] --> registerConfig[Register config]
-  registerConfig --> wirePipeline[Wire into pipeline]
-  wirePipeline --> writeTests[Write tests]
-  writeTests --> deployValidate[Deploy and validate]
-\`\`\`
-
-[Max 3 sentences caption. Do not restate diagram nodes.]
-
-## Prerequisites
-- [Tool or access required]
-- [Pre-condition: e.g., "the project must already be running locally"]
-
-## Step 1: Create the module
-Location: `src/[exact/directory/]`
-File name convention: `[naming pattern from existing modules]`
-
-Create `src/[path]/[name].py` with the required functions and classes described below:
-- `[function_or_class_name]`: [what it must do, derived from the reference implementation]
-- `[function_or_class_name]`: [same pattern]
-
-Verification: `[command to run]` → Expected: `[observable output]`
-
-## Step 2: Register the configuration
-File: `[exact config file path]`
-Section: `[exact section name]`
-
-Add an entry with these keys (match the shape of an existing entry in the same section):
-| Key | Value / type | Description |
+| Template | File | Notes |
 |---|---|---|
-| [key-name] | [type or example value] | [what it controls] |
+| README index | [readme-index.md](../templates/developer/readme-index.md) | Mandatory `README.md` shape |
+| Core Functions Reference | [core-functions-reference.md](../templates/developer/core-functions-reference.md) | Per-module API catalog |
+| Add-a-Feature Guide | [add-a-feature.md](../templates/developer/add-a-feature.md) | End-to-end extension workflow |
+| ADR | [adr.md](../templates/developer/adr.md) | Store as `docs/decisions/ADR-NNN-slug.md`. Number sequentially. Never delete — permanent record. Lifecycle: PROPOSED → ACCEPTED → (SUPERSEDED or DEPRECATED). Cross-link when superseding. |
+| API Doc (Python) | [api-doc-python.md](../templates/developer/api-doc-python.md) | Docstring shape |
+| API Doc (TypeScript) | [api-doc-typescript.md](../templates/developer/api-doc-typescript.md) | JSDoc shape |
+| API Doc (OpenAPI) | [api-doc-openapi.md](../templates/developer/api-doc-openapi.md) | REST endpoint shape |
+| Inline Gotcha | [inline-gotcha.md](../templates/developer/inline-gotcha.md) | Comment the *why*, not the *what* |
+| Changelog Entry | [changelog-entry.md](../templates/developer/changelog-entry.md) | [Keep a Changelog](https://keepachangelog.com/) format |
+| Agent-Context File | [agent-context.md](../templates/developer/agent-context.md) | `CLAUDE.md`, `AGENTS.md`, `.cursor/rules/` |
+| Not applicable stub | [not-applicable.md](../templates/not-applicable.md) | When track has no developer content |
 
-Verification: `[command]` → Expected: `[output]`
-
-## Step 3: Wire it into the pipeline / job definition
-File: `[exact file path]`
-
-[Describe the exact change — which field to add or update, and what value to set. Point to the equivalent existing entry as the pattern to follow.]
-
-Verification: `[command]` → Expected: `[output]`
-
-## Step 4: Write tests
-Location: `tests/[path]/`
-[Describe what to test — what inputs, what assertions — based on the test pattern used by existing modules]
-
-Verification: `[test command]` → Expected: all tests pass
-
-## Step 5: Deploy and validate
-\`\`\`bash
-[Exact deploy command]
-[Exact validation command or check]
-\`\`\`
-
-## Checklist
-- [ ] Module created in correct directory
-- [ ] Configuration entry added
-- [ ] Pipeline/job definition updated
-- [ ] Tests written and passing
-- [ ] Deployed and validated in dev
-```
-
----
-
-### API Doc (Python docstring)
-
-```python
-def function_name(param1: Type, param2: Type = default) -> ReturnType:
-    """One-line description of what this function does.
-
-    Args:
-        param1: Description including valid range or shape.
-        param2: Description. Defaults to `default`.
-
-    Returns:
-        Description of what is returned and its shape.
-
-    Raises:
-        ExceptionType: Condition that triggers this exception.
-
-    Example:
-        >>> result = function_name(param1=value)
-        >>> print(result)
-        expected_output
-    """
-```
-
----
-
-### API Doc (TypeScript / JSDoc)
-
-```typescript
-/**
- * One-line description of what this function does.
- *
- * @param paramName - Description including valid range or shape
- * @returns Description of what is returned
- * @throws {ErrorType} When and why this is thrown
- *
- * @example
- * const result = await myFunction({ id: 'abc123' });
- * console.log(result.status); // "ok"
- */
-export async function myFunction(input: InputType): Promise<OutputType> { ... }
-```
-
----
-
-### API Doc (OpenAPI / REST)
-
-```yaml
-/api/resource:
-  post:
-    summary: [One-line description]
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/CreateInput'
-    responses:
-      '201':
-        description: Resource created
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Resource'
-      '422':
-        description: Validation error
-```
-
----
-
-### Inline Gotcha
-
-Comment the *why*. Never comment the *what* — code that restates itself is noise.
-
-```
-# IMPORTANT: [One sentence stating the trap.]
-# [One to two sentences explaining why it exists and what breaks if ignored.]
-# See ADR-NNN or [file] for full rationale.
-```
-
-**Bad vs good:**
+**Inline gotcha — bad vs good:**
 
 ```python
 # BAD — restates the code
@@ -372,60 +113,6 @@ counter += 1  # increment counter by 1
 if now - window_start > WINDOW_SIZE_MS:
     counter = 0
     window_start = now
-```
-
----
-
-### Changelog Entry
-
-Follow [Keep a Changelog](https://keepachangelog.com/) format:
-
-```markdown
-## [X.Y.Z] - YYYY-MM-DD
-### Added
-- Feature name: brief description (#issue-number)
-
-### Fixed
-- Bug description (#issue-number)
-
-### Changed
-- What changed and why (#issue-number)
-
-### Removed
-- What was removed (#issue-number)
-```
-
----
-
-### Agent-Context File (CLAUDE.md / AGENTS.md / .cursor/rules/)
-
-```markdown
-# [Project Name] — Agent Context
-
-## What this project does
-[One paragraph. What problem it solves, who uses it.]
-
-## Stack
-- Language/runtime: ...
-- Key frameworks: ...
-- Database / storage: ...
-- Infrastructure: ...
-
-## Coding conventions
-- [Convention not enforced by linter]
-- [Naming pattern]
-- [File organization rule]
-
-## Preferred libraries
-- [Task] → use [library], not [alternative]
-
-## What NOT to do
-- Do not [anti-pattern 1 — include traps that would cause subtle failures]
-- Do not [anti-pattern 2]
-- [Trap or constraint]: [what goes wrong and why — fold gotcha guidance here, not in a separate section]
-
-## Architecture decisions
-Key decisions are recorded in `docs/decisions/`. Check there before re-litigating settled choices.
 ```
 
 ---
@@ -444,9 +131,10 @@ Key decisions are recorded in `docs/decisions/`. Check there before re-litigatin
 - Repo provenance citations in output (`(from ...)`, `> Source: ...`)
 - Fenced implementation code (signatures, skeletons, copied config) in `user-playbook.md` or `developer-playbook.md`
 - `## Known issues`, `## Known conflicts`, `## Known issues and conflicts`, `## Known gotchas`, or equivalent standalone conflict/issue sections
-- Sequential logic described in long prose without a Mermaid flowchart (3+ steps or branching)
+- Sequential logic described in long prose without an ASCII flowchart (3+ steps or branching)
 - Prose under a diagram that restates nodes or edges already shown
 - Diagram nodes or edges not verifiable from source material
+- Mermaid blocks in output (use ASCII in `text` fences instead)
 
 ---
 
@@ -467,7 +155,15 @@ Run this checklist for developer-track content, then run the **skill-level VERIF
 - [ ] No repo provenance citations in `user-playbook.md` or `developer-playbook.md`
 - [ ] No prohibited code fences (only usage syntax and shell commands)
 - [ ] No standalone known-issues/conflicts/gotchas sections in mandatory output files
-- [ ] Module-level and pipeline-stage Mermaid flowcharts present where required
-- [ ] Every 3+ step or branching process opens with a Mermaid flowchart before prose
+- [ ] Module-level and pipeline-stage ASCII flowcharts present where required
+- [ ] Every 3+ step or branching process opens with an ASCII flowchart before prose
 - [ ] Prose under each diagram is ≤ ~3 sentences and does not restate diagram content
-- [ ] Add-a-feature guide opens with workflow overview Mermaid diagram
+- [ ] Add-a-feature guide opens with workflow overview ASCII diagram
+- [ ] No Mermaid blocks in output
+
+---
+
+## Additional resources
+
+- ASCII diagram syntax: [ascii-diagram-guide.md](ascii-diagram-guide.md)
+- Skill contracts and execution order: [SKILL.md](../SKILL.md)

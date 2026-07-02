@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "create-diagram": {
+      "source": "akshay-diwadkar/skills",
+      "sourceType": "github",
+      "skillPath": "create-diagram/SKILL.md",
+      "computedHash": "59736cda6829e1067172751f900f2d1066fd94c4af891a2f574c0ac6d73b916e"
+    }
+  }
+}

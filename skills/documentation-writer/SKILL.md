@@ -57,7 +57,7 @@ These rules are non-negotiable. Violating them produces documentation that activ
 3. **Capture the Why** — Record *why* decisions were made, not just *what* was built.
 4. **Consistency** — One term per concept, maintained throughout.
 5. **Source of truth** — Provided code, file trees, and existing docs are the only authoritative input. Derive everything from them.
-6. **Completeness over verbosity** — Cover every behavior, parameter, and edge case using tables and Mermaid flowcharts. Do not compensate with long prose. A reader must be able to act without consulting anyone.
+6. **Completeness over verbosity** — Cover every behavior, parameter, and edge case using tables and ASCII flowcharts. Do not compensate with long prose. A reader must be able to act without consulting anyone.
 
 ---
 
@@ -68,17 +68,17 @@ These rules are non-negotiable. Violating them produces documentation that activ
 Every invocation of this skill **always produces exactly three output files**, regardless of the audience or request type:
 
 
-| File                    | Content                                                                                                                                                                               | Maps to                                    |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
-| `README.md`             | Index page — one-paragraph project description, link to `user-playbook.md`, link to `developer-playbook.md`. Max 60 lines. No commands, no architecture, no module tables.            | Index template in `developer-playbook.md`  |
-| `user-playbook.md`      | End-user documentation — core features overview, plain-language component descriptions, how to run the project. No file paths, no troubleshooting tables, no misconceptions sections. | User track → User Playbook templates       |
-| `developer-playbook.md` | Engineer documentation — API/function reference, ADRs, add-a-feature guides, agent-context                                                                                            | Developer track → all non-README templates |
+| File                    | Content                                                                                                                                                                               | Maps to                                                                 |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `README.md`             | Index page — one-paragraph project description, link to `user-playbook.md`, link to `developer-playbook.md`. Max 60 lines. No commands, no architecture, no module tables.            | [templates/developer/readme-index.md](templates/developer/readme-index.md) |
+| `user-playbook.md`      | End-user documentation — core features overview, plain-language component descriptions, how to run the project. No file paths, no troubleshooting tables, no misconceptions sections. | [templates/user/](templates/user/)                                      |
+| `developer-playbook.md` | Engineer documentation — API/function reference, ADRs, add-a-feature guides, agent-context                                                                                            | [templates/developer/](templates/developer/)                            |
 
 
 **Rules:**
 
 - All three files are produced on every run. There are no single-file or two-file outputs.
-- If the user's request does not touch a file's content area, produce the file with a brief `## Not applicable` section explaining why — do not omit the file.
+- If the user's request does not touch a file's content area, produce the file with a brief `## Not applicable` section explaining why — do not omit the file. Use [templates/not-applicable.md](templates/not-applicable.md) as the shape.
 - File names are exact as listed above. Do not rename them.
 - All content still follows the anti-hallucination rules: derive from source material, verify internally, surface gaps as numbered questions.
 - All content follows the OUTPUT FORMAT rules below.
@@ -132,20 +132,15 @@ Do not add standalone callout sections in `user-playbook.md` or `developer-playb
 
 When sources disagree, resolve via the consolidated gap batch, then document verified behavior in the normal section (API reference, config table, how-to) — not a separate issues section.
 
-### Diagrams — required (Mermaid only)
+### Diagrams — required (ASCII in `text` fences)
 
-Use fenced ````mermaid` blocks in `user-playbook.md` and `developer-playbook.md` only. No ASCII flowcharts. No Mermaid in `README.md`.
+Use fenced ` ```text ` blocks in `user-playbook.md` and `developer-playbook.md` only. No Mermaid. No diagrams in `README.md`. ASCII renders on Jekyll and other static-site generators without plugins.
 
-**Diagram-first trigger:** Any workflow, pipeline, request path, component interaction, or decision logic with **3+ steps or any branching** must open with a Mermaid flowchart. Prose follows the diagram — never the reverse.
+**Diagram-first trigger:** Any workflow, pipeline, request path, component interaction, or decision logic with **3+ steps or any branching** must open with an ASCII flowchart. Prose follows the diagram — never the reverse.
 
 **Prose cap:** Max ~3 sentences under each diagram (caption + non-obvious context only). Do not restate nodes or edges already shown in the diagram. Facts belong in tables.
 
-**Mermaid syntax:**
-
-- Use `flowchart TD` or `flowchart LR`
-- camelCase or underscore node IDs — no spaces in IDs
-- Quote node labels containing special characters: `A["Step: init"]`
-- Do not use explicit colors or style directives
+**ASCII syntax:** See [references/ascii-diagram-guide.md](references/ascii-diagram-guide.md) for patterns, width limits (~72 chars), and branching notation.
 
 **No invention in diagrams:** Every node, edge, and label must map to verified source behavior. If a branch is unknown, ask in the consolidated gap batch — do not invent a node.
 
@@ -181,7 +176,7 @@ Track determines which content populates which mandatory output file. All three 
 
 Run the grilling round after track identification and before source-material assessment. Its purpose is to establish shared understanding of domain terminology, design intent, and success criteria so that the documentation reflects the team's mental model — not just the code's surface.
 
-**diaDo not write any content until the grilling round is complete and answers have been received.**
+**Do not write any content until the grilling round is complete and answers have been received.**
 
 ### When to skip
 
@@ -308,11 +303,11 @@ Execute these steps in sequence on every invocation. Do not skip or reorder.
 
 1. **Read OUTPUT CONTRACT** — confirm you will produce `README.md`, `user-playbook.md`, and `developer-playbook.md`.
 2. **Identify track** — use the TRACK IDENTIFICATION table.
-3. **Read playbook(s)** — User track: read `references/user-playbook.md`. Developer track: read `references/developer-playbook.md`. Both: read both.
+3. **Read playbook(s) and templates** — User track: read [references/user-playbook.md](references/user-playbook.md) and relevant files in [templates/user/](templates/user/). Developer track: read [references/developer-playbook.md](references/developer-playbook.md) and relevant files in [templates/developer/](templates/developer/). Both: read both playbooks and both template folders. Read [references/ascii-diagram-guide.md](references/ascii-diagram-guide.md) when output includes workflows or branching.
 
 3a. **Run Grilling Round** — follow the GRILLING ROUND section. Ask 4-5 questions covering concepts, tasks, and goals as a single batch. Do not write any content until all answers are received. If the skip condition applies, state it explicitly and proceed to step 4.
 4. **Assess source material AND incorporate grilling answers** — apply CONTEXT HANDLING rules. Merge any unresolved grilling points and source-material gaps into one consolidated numbered list. Send the list to the user and wait for all answers before generating any content.
-5. **Generate all three files** — follow the playbook workflow and OUTPUT FORMAT rules for each file. Files outside the active track's primary content area get a `## Not applicable` section.
+5. **Generate all three files** — follow the playbook workflow, linked templates, and OUTPUT FORMAT rules for each file. Files outside the active track's primary content area get a `## Not applicable` section per [templates/not-applicable.md](templates/not-applicable.md).
 6. **Run VERIFICATION checklist** — confirm every item before delivering output.
 
 ---
@@ -336,8 +331,23 @@ Before delivering output, confirm every item:
 - [ ] API names, types, and defaults match source — presented in tables/prose, not fenced signature blocks
 - [ ] Code fences limited to usage syntax and shell commands per OUTPUT FORMAT
 - [ ] Documentation is comprehensive via tables and diagrams — behaviors, parameters, edge cases, and configuration all covered without long prose
-- [ ] Every workflow or process with 3+ steps or branching opens with a Mermaid flowchart in the relevant playbook
+- [ ] Every workflow or process with 3+ steps or branching opens with an ASCII flowchart in a `text` fence in the relevant playbook
 - [ ] Prose under each diagram is ≤ ~3 sentences and does not restate diagram content
-- [ ] `README.md` contains no Mermaid blocks
+- [ ] `README.md` contains no diagrams
+- [ ] No Mermaid blocks anywhere in output
 - [ ] Diagram nodes and edges verified against source — none invented
 - [ ] Grilling round was run (or skip condition explicitly stated)
+
+---
+
+## Additional resources
+
+| Resource | Path |
+|---|---|
+| User playbook (workflow, depth, checklists) | [references/user-playbook.md](references/user-playbook.md) |
+| Developer playbook (workflow, depth, checklists) | [references/developer-playbook.md](references/developer-playbook.md) |
+| ASCII diagram guide | [references/ascii-diagram-guide.md](references/ascii-diagram-guide.md) |
+| README index template | [templates/developer/readme-index.md](templates/developer/readme-index.md) |
+| User templates | [templates/user/core-features-overview.md](templates/user/core-features-overview.md), [tutorial.md](templates/user/tutorial.md), [how-to.md](templates/user/how-to.md), [reference.md](templates/user/reference.md), [explanation.md](templates/user/explanation.md) |
+| Developer templates | [templates/developer/](templates/developer/) |
+| Not applicable stub | [templates/not-applicable.md](templates/not-applicable.md) |
